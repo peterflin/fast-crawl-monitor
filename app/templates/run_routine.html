@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="row row-centered">
+  <div>
+    <h1>State: {{running_state}}</h1>
+  </div>
+  <div class="col-xs-8 col-sm-7 col-md-12 col-lg-12">
+    <form action="run_routine", method="POST">
+      <input name="state" type="hidden" value="{{running}}">
+      {% if running == true %}
+      <button class="btn btn-defalut" disabled>Start</button>
+      {% else %}
+      <button class="btn btn-success" >Start</button>
+      {% endif %}
+      {% if running == false %}
+      <button class="btn btn-defalut" disabled>Stop</button>
+      {% else %}
+      <button class="btn btn-danger">Stop</button>
+      {% endif %}
+    </form>
+  </div>
+  {% for url in server_list %}
+  <div class="col-xs-8 col-sm-7 col-md-12 col-lg-12">
+    <div class="panel-group">
+      <div class="panel panel-default">
+        <div class="panel-heading"><b>Server:</b> {{url}}</div>
+        <div class="panel-body">
+          <div class="row">
+            {% for key, value in server_list[url].items() %}
+            <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+              <div class="panel panel-info">
+                <div class="panel-heading">
+                  <h3 class="panel-title">{{key}}</h3>
+                </div>
+                <div class="panel-body">
+                  <form action="run_routine" method="POST">
+                    <input name="module" type="hidden" value="{{key}}">
+                    <input name="server" type="hidden" value="{{url}}">
+                    {% if value != "Running" %}
+                    <input name="switch" type="hidden" value="start">
+                    <button class="btn btn-success">Start</button>
+                    {% else %}
+                    <input name="switch" type="hidden" value="stop">
+                    <button class="btn btn-danger">Stop</button>
+                    {% endif %}
+                    <p>Status: {{value}}<br/></p>
+                  </form>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  function run_routine(run){
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://140.128.102.159:5050/run_routine");
+    xhr.onload = function () {
+    }
+    var send_data;
+    if (run=='start')
+      send_data = "state=start"
+    else if (run =='stop')
+      send_data = "state=stop"
+    xhr.send(send_data);
+  }
+</script>
+{% endblock %}

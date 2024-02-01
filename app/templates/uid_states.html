@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Scrapy Cluster</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/custom.css">
+</head>
+
+<body>
+<div class="container-fluid">
+  <ul>
+    <li><a href="/"><img alt="" src="/static/img/rsz_11logo.png"></a></li>
+    <li style="font-size: 26px"><a href="/">Crawler Monitor</a></li>
+    <li style="font-size: 22px"><a href="/crawl_states">Crawl States</a></li>
+    <li style="font-size: 26px; float:right"><a href="http://scrapy-cluster.readthedocs.io/en/latest/">##--Documentation .--##</a></li>
+  </ul>
+  <h1>  </h1>
+    <div class="row row-centered">
+      <div class="col-xs-12 col-sm-12 col-lg-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{title}}</div>
+          <div class="panel-body">
+            <div class="container">
+              <div id="table-1" class="col-xs-12 col-sm-12 col-lg-12">
+                  {{table}}
+              </div>
+              <!-- <button class="btn btn-default col-md-1 col-lg-1" onclick='reload(-1)'>Before</button>
+              <button class="btn btn-default col-md-1 col-lg-1" onclick='reload(1)'>Next</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<footer class="text-center">
+    <!-- D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- Plotly.js -->
+    <!-- <script src="https://d14fo0winaifog.cloudfront.net/plotly-basic.js"></script> -->
+  </footer>
+<script>
+  // function reload(direction){
+  //   // console.log(direction)
+  //   // console.log(document.URL.split("?")[1].split('&').length)
+  //   if (document.URL.split("?")[1].split('&').length > 1){
+  //     var h = document.URL;
+  //     h = h.split("?")[1].split("&")[0];
+  //     var h2 =  document.URL.split("?")[1].split('&')[1];
+  //     var para1 = h.split("=")[0];
+  //     var para2 = h.split("=")[1];
+  //     if (h2.split("=")[0] == "after"){
+  //       var offset = parseInt(h2.split("=")[1]) + 10*direction;
+  //       if (offset < 0)
+  //         offset = 0;
+  //       window.open("/get_states_list?" + para1 + "=" + para2 + "&after=" + offset, "_self");
+  //     }
+  //   }
+  //   else{
+  //     var h = document.URL;
+  //     h = h.split("?")[1].split("&")[0];
+  //     var h2 =  document.URL.split("?")[1].split('&')[1];
+  //     var para1 = h.split("=")[0];
+  //     var para2 = h.split("=")[1];
+  //     // console.log("/get_states_list?" + para1 + "=" + para2 + "&after=10");
+  //     if (direction == 1)
+  //       window.open("/get_states_list?" + para1 + "=" + para2 + "&after=10", "_self");
+  //     else
+  //       window.open("/get_states_list?" + para1 + "=" + para2, "_self");
+  //   }
+  // }
+</script>

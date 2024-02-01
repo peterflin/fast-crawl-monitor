@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="row row-centered">
+      <div class="col-xs-12 col-sm-12 col-lg-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">{{title}}</div>
+          <div class="panel-body">
+            <div class="container">
+              <div id="table-1" class="col-xs-12 col-sm-12 col-lg-12">
+                  {{table}}
+              </div>
+              {% if btn_enable.before == true %}
+              <button class="btn btn-default col-md-1 col-lg-1" onclick='reload(-1)'>Before</button>
+              {% else %}
+              <button class="btn btn-default col-md-1 col-lg-1" onclick='reload(-1)' disabled>Before</button>
+              {% endif %}
+              
+              {% if btn_enable.next == true %}
+              <button class="btn btn-default col-md-1 col-lg-1" onclick='reload(1)'>Next</button>
+              {% else %}
+              <button class="btn btn-default col-md-1 col-lg-1" onclick='reload(1)' disabled>Next</button>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<script>
+  function reload(direction){
+    // console.log(direction)
+    // console.log(document.URL.split("?")[1].split('&').length)
+    if (document.URL.split("?")[1].split('&').length > 1){
+      var h = document.URL;
+      h = h.split("?")[1].split("&")[0];
+      var h2 =  document.URL.split("?")[1].split('&')[1];
+      var para1 = h.split("=")[0];
+      var para2 = h.split("=")[1];
+      if (h2.split("=")[0] == "after"){
+        var offset = parseInt(h2.split("=")[1]) + 10*direction;
+        if (offset < 0)
+          offset = 0;
+        window.open("/get_states_list?" + para1 + "=" + para2 + "&after=" + offset, "_self");
+      }
+    }
+    else{
+      var h = document.URL;
+      h = h.split("?")[1].split("&")[0];
+      var h2 =  document.URL.split("?")[1].split('&')[1];
+      var para1 = h.split("=")[0];
+      var para2 = h.split("=")[1];
+      // console.log("/get_states_list?" + para1 + "=" + para2 + "&after=10");
+      if (direction == 1)
+        window.open("/get_states_list?" + para1 + "=" + para2 + "&after=10", "_self");
+      else
+        window.open("/get_states_list?" + para1 + "=" + para2, "_self");
+    }
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,249 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="row row-centered">
+      <div class="col-xs-12 col-sm-12 col-lg-12">
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-heading">Monitor status</div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-xs-8 col-sm-7 col-lg-3">
+                  {% if status.redis_connected == true %}
+                  <div id='redis' class="panel panel-success">
+                  {% else %}
+                  <div id='redis' class="panel panel-danger">
+                  {% endif %}
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Redis</h3>
+                    </div>
+                    <div class="panel-body">
+                      {% if status.redis_connected == true %}
+                      <p style="font-size:70%;">Status: 'OK'<br/></p>
+                      {% else %}
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                      {% endif %}                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xs-8 col-sm-7 col-lg-3">
+                  {% if status.kafka_connected == true %}
+                  <div id='kafka' class="panel panel-success">
+                  {% else %}
+                  <div id='kafka' class="panel panel-danger">
+                  {% endif %}
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Kafka</h3>
+                    </div>
+                    <div class="panel-body">
+                      {% if status.kafka_connected == true %}
+                      <p style="font-size:70%;">Status: 'OK'<br/></p>
+                      {% else %}
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-xs-8 col-sm-7 col-lg-3">
+                  {% if status.node_health == "GREEN" %}
+                  <div id="state" class="panel panel-success">
+                  {% else %}
+                  <div id="state" class="panel panel-danger">
+                  {% endif %}
+                    <div class="panel-heading">
+                      <h3 class="panel-title">State Thread</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-8 col-sm-7 col-lg-3">
+                  {% if status.node_health == "GREEN" %}
+                  <div id="module_state" class="panel panel-success">
+                  {% else %}
+                  <div id="module_state" class="panel panel-danger">
+                  {% endif %}
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Module State Thread</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="panel panel-default">
+            <div class="panel-heading">Module status</div>
+            <div class="panel-body">
+              <div id="module_states" class="row">
+
+                <div class="col-xs-8 col-sm-7 col-lg-4">
+                  <div id="urlcollector" class="panel panel-success">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Url Collector</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                    </div>
+                  </div>
+                </div>    
+                <div class="col-xs-8 col-sm-7 col-lg-4">
+                  <div id="htmlprocessor" class="panel panel-success">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">HtmlProcessor</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-8 col-sm-7 col-lg-4">
+                  <div id="dataconsumer" class="panel panel-success">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Data Consumer</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-8 col-sm-7 col-lg-4">
+                  <div id="statesconsumer" class="panel panel-success">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">States Consumer</h3>
+                    </div>
+                    <div class="panel-body">
+                      <p style="font-size:70%;">Status: 'ERROR'<br/></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row row-centered">
+      <div class="col-xs-12 col-sm-12 col-lg-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">Newest Web States</div>
+          <div class="panel-body">
+            <div class="container">
+              <div id="table-1" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                  {{table}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function ajax_call(){
+      var jdata;
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "http://127.0.0.1:5050/get_states_data");
+      xhr.onload = function () {
+          var res = JSON.parse(this.response);
+          console.log(res);
+          // document.getElementById("module_states").innerHTML = res['module_server_state'];
+          document.getElementById("table-1").innerHTML = res["states"];
+          // if (res['modules_status']['UrlCollector']['alive']){
+          //   document.getElementById("urlcollector").className = "panel panel-info";
+          //   // document.getElementById("urlcollector").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Url Collector</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'<br/>New Url: ' + res['modules_status']['UrlCollector']['new_request'] + '</p></div>';
+          //   document.getElementById("urlcollector").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Url Collector</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'</p></div>';
+          // }
+          // else{
+          //   document.getElementById("urlcollector").className = "panel panel-info";
+          //   document.getElementById("urlcollector").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Url Collector</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          // }
+          // if (res['modules_status']['HtmlProcessor']['alive']){
+          //   document.getElementById("htmlprocessor").className = "panel panel-info";
+          //   document.getElementById("htmlprocessor").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Html Processor</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'<br/></p></div>';
+          // }
+          // else{
+          //   document.getElementById("htmlprocessor").className = "panel panel-info";
+          //   document.getElementById("htmlprocessor").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Html Processor</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          // }
+          if (res['modules_status']['kafka']['alive']){
+            document.getElementById("kafka").className = "panel panel-success";
+            document.getElementById("kafka").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Kafka</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'<br/></p></div>';
+          }
+          else{
+            document.getElementById("kafka").className = "panel panel-danger";
+            document.getElementById("kafka").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Kafka</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          }
+          if (res['modules_status']['redis']['alive']){
+            document.getElementById("redis").className = "panel panel-success";
+            document.getElementById("redis").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Redis</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'<br/></p></div>';
+          }
+          else{
+            document.getElementById("redis").className = "panel panel-danger";
+            document.getElementById("redis").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Redis</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          }
+          if (res['update_process_state_thread']){
+            document.getElementById("state").className = "panel panel-success";
+            document.getElementById("state").innerHTML = '<div class="panel-heading"><h3 class="panel-title">State Thread</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'<br/></p></div>';
+          }
+          else{
+            document.getElementById("state").className = "panel panel-danger";
+            document.getElementById("state").innerHTML = '<div class="panel-heading"><h3 class="panel-title">State Thread</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          }
+          if (res['update_module_state_thread']){
+            document.getElementById("module_state").className = "panel panel-success";
+            document.getElementById("module_state").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Module State Thread</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'OK\'<br/></p></div>';
+          }
+          else{
+            document.getElementById("module_state").className = "panel panel-danger";
+            document.getElementById("module_state").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Module State Thread</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          }
+      };
+      xhr.onerror = function(){
+            document.getElementById("urlcollector").className = "panel panel-danger";
+            document.getElementById("urlcollector").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Url Collector</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+
+            document.getElementById("htmlprocessor").className = "panel panel-danger";
+            document.getElementById("htmlprocessor").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Html Processor</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+
+            document.getElementById("kafka").className = "panel panel-danger";
+            document.getElementById("kafka").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Kafka</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+          
+            document.getElementById("redis").className = "panel panel-danger";
+            document.getElementById("redis").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Redis</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+
+            document.getElementById("state").className = "panel panel-danger";
+            document.getElementById("state").innerHTML = '<div class="panel-heading"><h3 class="panel-title">State Thread</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+
+            document.getElementById("module_state").className = "panel panel-danger";
+            document.getElementById("module_state").innerHTML = '<div class="panel-heading"><h3 class="panel-title">Module State Thread</h3></div><div class="panel-body"><p style="font-size:70%;">Status: \'ERROR\'<br/></p></div>';
+      }
+      xhr.send();
+  }
+  function load_module_states(){
+    var xhr = new XMLHttpRequest();
+      xhr.open("GET", "http://127.0.0.1:5050/get_module_server_states");
+      xhr.onload = function () {
+          console.log(this.responseText);
+          document.getElementById("module_states").innerHTML = this.responseText;
+      };
+      xhr.onerror = function(){
+        document.getElementById("module_states").innerHTML = '<div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">UrlCollector</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">HtmlProcessor</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">DataConsumer</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">StatesConsumer</h3></div><div class="panel-body">No Server Run.</div></div></div>'
+
+      }
+      xhr.send();
+  }
+  
+ajax_call();
+load_module_states()
+setInterval(ajax_call, 5000);
+setInterval(load_module_states, 5000)
+</script>
+{% endblock %}
