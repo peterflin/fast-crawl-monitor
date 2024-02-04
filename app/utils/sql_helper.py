@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from config import DB_URI
 
 
 Base = declarative_base()
-engine_url = "mysql+pymysql://root:@localhost/hidden_crawl"
-engine = create_engine(engine_url)
+engine = create_engine(DB_URI)
 
 
 def create_table():

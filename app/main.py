@@ -7,7 +7,7 @@ from fastapi.openapi.docs import (
 )
 from fastapi.staticfiles import StaticFiles
 from router import router as main_router
-from utils.backend_thread import states_from_db
+from utils.backend_thread import states_from_db, process_module_status
 
 app = FastAPI(docs_url=None, redoc_url=None)
 app.openapi_version = "3.0.2"
@@ -18,6 +18,10 @@ app.mount("/static", StaticFiles(directory='static'), name='static')
 @app.on_event("startup")
 async def start_up():
     states_thread = Thread(target=states_from_db)
+    states_thread.setDaemon(True)
+    states_thread.start()
+    #
+    states_thread = Thread(target=process_module_status)
     states_thread.setDaemon(True)
     states_thread.start()
 

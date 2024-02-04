@@ -3,8 +3,10 @@ import redis
 from kafka import KafkaConsumer
 from kafka.errors import NoBrokersAvailable
 from utils import sql_helper
-from utils.models import CrawlState, JobUrl
+from utils.sql_models import CrawlState, JobUrl, ServerSignup
+from model.redis_model import RedisModel
 from sqlalchemy import func
+from config import REDIS_HOST
 
 state2code = {"init": 0, "request": 1, "parse": 2, "store": 3, "error": 4, "enqueue": 5, "dequeue": 6, "drop": 7}
 
@@ -16,7 +18,7 @@ def states_from_db():
     while 1:
         # get server session
         session = sql_helper.create_session()
-        r = redis.StrictRedis(host='127.0.0.1', port=6379, socket_timeout=3, password='redis@cia_0119')
+        r = redis.StrictRedis(host=REDIS_HOST, port=6379, socket_timeout=3, password='redis@cia_0119')
         # reset keys
         r.delete("crawl_state_key")
         r.delete("error_state_key")
@@ -75,3 +77,22 @@ def states_from_db():
             "receive_time": time.time(), "alive": 1
         })
         time.sleep(3)
+
+
+def process_module_status():
+    while 1:
+        # get data from mysql
+        session = sql_helper.create_session()
+        check_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time() - 10))
+        data = session.query(ServerSignup).filter(ServerSignup.connection_check > check_time).all()
+        session.close()
+        # overwrite data to redis
+        redis = RedisModel()
+        # for e in redis.redis.lrange(0, -1):
+        #     redis.redis.delete(e.decode("utf8"))
+        redis.redis.delete("signup_server")
+        for row in data:
+            redis.redis.lpush("signup_server", row.server)
+        del redis
+        time.sleep(3)
+    

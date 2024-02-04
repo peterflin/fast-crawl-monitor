@@ -19,7 +19,7 @@
 <script>
   function change_enable(url, state){
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://140.128.102.159:5050/change_enable?url=" + url + "&ori_state=" + state);
+    xhr.open("GET", "http://127.0.0.1:5050/change_enable?url=" + url + "&ori_state=" + state);
     xhr.onload = function () {
     }
     xhr.send();

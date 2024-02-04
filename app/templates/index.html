@@ -184,7 +184,7 @@
   function ajax_call(){
       var jdata;
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", "http://127.0.0.1:5050/get_states_data");
+      xhr.open("GET", "http://127.0.0.1:8000/get_states_data");
       xhr.onload = function () {
           var res = JSON.parse(this.response);
           console.log(res);
@@ -262,7 +262,7 @@
 
   function gen_uid(){
     var xhr = new XMLHttpRequest();
-      xhr.open("GET", "http://127.0.0.1:5050/get_states_data");
+      xhr.open("GET", "http://127.0.0.1:8000/get_states_data");
       xhr.onload = function () {
         document.getElementsByName("crawlid")[0].value = this.responseText;
       }
@@ -270,14 +270,16 @@
   }
   function load_module_states(){
     var xhr = new XMLHttpRequest();
-      xhr.open("GET", "http://127.0.0.1:5050/get_module_server_states");
+      xhr.open("GET", "http://127.0.0.1:8000/get_module_server_states");
       xhr.onload = function () {
-          console.log(this.responseText);
-          document.getElementById("module_states").innerHTML = this.responseText;
+          console.log(this.responseText ? true : false);
+          if(this.responseText ? true : false)
+              document.getElementById("module_states").innerHTML = '<div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">UrlCollector</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">HtmlProcessor</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">DataConsumer</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">StatesConsumer</h3></div><div class="panel-body">No Server Run.</div></div></div>';
+          else
+              document.getElementById("module_states").innerHTML = this.responseText;
       };
       xhr.onerror = function(){
         document.getElementById("module_states").innerHTML = '<div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">UrlCollector</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">HtmlProcessor</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">DataConsumer</h3></div><div class="panel-body">No Server Run.</div></div></div><div class="col-xs-8 col-sm-6 col-md-3 col-lg-3"><div class="panel panel-info"><div class="panel-heading"><h3 class="panel-title">StatesConsumer</h3></div><div class="panel-body">No Server Run.</div></div></div>'
-
       }
       xhr.send();
   }

@@ -16,6 +16,18 @@ def crawl_states(request: Request):
     return ViewController().crawl_states_template(request)
 
 
-@router.get("/test1")
-def test():
-    return ViewController().test_fn()
+@router.get("/get_module_server_states", tags=["Page"])
+def get_module_server_states(request: Request):
+    return ViewController().module_server_states(request)
+
+@router.get("/get_states_data", tags=['Page'])
+def get_states_data(request: Request):
+    return ViewController().states_data(request)
+
+@router.get("/run_routine", tags=['Page'])
+def run_routine(request: Request):
+    return ViewController().run_routine(request)
+
+@router.get("/job_list", tags=["Page"])
+def job_list(request: Request):
+    return ViewController().job_list_template(request)
