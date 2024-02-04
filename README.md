@@ -2,6 +2,18 @@
 
 A re-build distributed crawler system using FastAPI
 
+## How to run
+build image & run
+```bash
+cd fast-crawl
+sh auto_run.sh
+```
+### ENV
+- REDIS_HOST : redis server host name, ex: 127.0.0.1
+- REDIS_PORT : redis server port, ex: 6379
+- REDIS_PWD : redis password, ex: pwd123
+- DB_URI : sqlalchemy connect uri, ex: mysql+pymysql://user:pwd@127.0.0.1/fast_crawl
+
 ## Tech Stack
 - FastAPI
 - Redis

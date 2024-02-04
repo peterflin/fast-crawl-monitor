@@ -24,10 +24,10 @@ def get_module_server_states(request: Request):
 def get_states_data(request: Request):
     return ViewController().states_data(request)
 
-@router.get("/run_routine", tags=['Page'])
+@router.get("/run_routine", tags=['Page'], response_class=HTMLResponse)
 def run_routine(request: Request):
     return ViewController().run_routine(request)
 
-@router.get("/job_list", tags=["Page"])
+@router.get("/job_list", tags=["Page"], response_class=HTMLResponse)
 def job_list(request: Request):
     return ViewController().job_list_template(request)
