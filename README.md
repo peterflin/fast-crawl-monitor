@@ -1,6 +1,12 @@
-# Fast Crawler 1.0
+# Fast Crawler
 
-A re-build distributed crawler system using FastAPI
+Web service for a distributed crawler system using FastAPI
+
+## Tech Stack
+- FastAPI
+- Redis
+- Kafka
+- MySQL
 
 ## How to run
 build image & run
@@ -14,24 +20,22 @@ sh auto_run.sh
 - REDIS_PWD : redis password, ex: pwd123
 - DB_URI : sqlalchemy connect uri, ex: mysql+pymysql://user:pwd@127.0.0.1/fast_crawl
 
-## Tech Stack
-- FastAPI
-- Redis
-- Kafka
-- MySQL
-
 ## 介紹 & 名詞定義
 
 ### 運作流程
-1. 統一蒐集URL，暫存於Redis
-2. UrlCollector: 取得一定量於Redis列隊的URL，同時發布到AWS Lambda進行網頁HTML下載
-3. LambdaProcessor: 回傳Lambda下載的HTML，存入Redis\(另一個Queue\)等待處理
-4. HtmlConsumer: 
-    - 取得下載回存於Redis的Html\(一次只處理一個網頁\)，並根據取得的資料\(Html、ParserName、該網頁的URL\)，使用Parser模組丟入HTML進行解析，並回傳資訊
-    - 使用Generator取得Return的物件，根據物件的class，
-        - Scrapy.Request: 新的請求網頁，callback為Parser，加入Redis等待請求
-        - Scrapy.items: 解析出的資料，發布到Kafka等待Consumer處理
-5. DataConsumer: crawl item的Consumer，依收到的DataType決定如何儲存\(DB\)
+1. TaskRequester: Construct a task and push a new task into kafka queue, wait for consumer in the next stage(UrlCollector).
+2. UrlCollector: Collect url and send request to get HTML or data. Push result to kafka queue, wait for consumer in the next stage(.
+3. HtmlProcessor:
+    - Get HTML or data, and parse the unstructure data into structure data according to parser name(in metadata).
+    - Default use program which base on scrapy. Hence, follow the rules of scrapy to call parse function and return `scrapy.item` class.
+        - Scrapy.Request: Real scrpay.request object or create a fake reqeust object whick follow the scrapy.request rule. It would be transformed into a object which contains an url(string) and a callback function name(string).
+        - Scrapy.Response: Real scrapy.response object or create a fake response object which follow the scrapy.response rule.
+        - Scrapy.items: Real scrapy.items object or create a fake response object which follow the scrapy.items rule. It would be pushed into kafka queue, and wait for consumer int the next stage(DataConsumer).
+4. DataConsumer: Accord to the data type which from kafka queue to decide how to store data.
+5. StateConsumer: Process message of stage to trace every progress of task.
+
+---
+> 以下尚未更新內容...
 
 ### UrlCollector
 ```
